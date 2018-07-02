@@ -1,15 +1,22 @@
 # borg-cygwin
 
-This creates a standard Windows installer for Borg Backup on 64bit Windows 7 and above.
+Based on the work of Billy Charlton and digidream
+
+This creates a standard Windows installer for Borg Backup on 64bit (propably also 32bit) Windows 7 and above.
 
 * The only prerequisite is NSIS installed, available at http://nsis.sourceforge.net/Download
-* About 1 GB free disk space required to build installer
-* Borg install itself will only require about 150 MB
-* Tested on Windows 7 64-bit
+* About 3 GB free disk space required to build installer
+* Borg install itself will only be ~85MB and require about 300MB on disk
+* Tested on Windows 8.1 64-bit
 
 ---
+Create the build environment by using bootstrap.bat
+You then may proceed to run build_installer_64.bat and/or build_installer_32.bat, to create the run environment and the corresponding installer.
 
-Create the installer by running install.bat. After creating the installer, run it to install Borg.
+Updating verisons is not tested yet.
+
+A backup script is included in the installation.
+I highly recommend to run the backup job as SYSTEM user, as permissions should not be an issue.
 
 Then use borg like this, noting that all file paths are in Cygwin notation e.g. /cygdrive/c/path/to/my/files
 

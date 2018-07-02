@@ -1,0 +1,48 @@
+#!/bin/sh
+MAKENSIS=`cygpath "C:\\Program Files (x86)\\NSIS\\makensis.exe"`
+BASEDIR=$1
+ARCH=$2
+BUILDPATH=${BASEDIR}build/${ARCH}
+RUNPATH=${BASEDIR}run/${ARCH}/
+
+CYGSETUP=${BASEDIR}cache/setup-x86.exe
+
+INSTALLPKGS=python3,openssh,liblz4_1,gcc-core
+REMOVEPKGS=csih,gawk,lynx,man-db,groff,vim-minimal,tzcode,ncurses,info,util-linux
+CYGMIRROR=http://mirrors.kernel.org/sourceware/cygwin/
+
+cd ${BASEDIR}cache
+$CYGSETUP -q -B -o -n -R `cygpath -w $RUNPATH` -L -D -s $CYGMIRROR -P $INSTALLPKGS -x $REMOVEPKGS
+
+cp -rf ${BASEDIR}nsswitch.conf ${RUNPATH}etc/
+cp -rf /etc/fstab ${RUNPATH}etc/
+cp -rf ${BASEDIR}backupscript ${RUNPATH}backupscript.example
+chmod +x ${RUNPATH}backupscript
+
+cp -rf /bin/borg ${RUNPATH}bin/
+
+cd /lib/python3.6/site-packages/
+cp -rf borg* msgpack* pkg_resources* six* packaging* pyparsing* appdirs* ${RUNPATH}lib/python3.6/site-packages/
+
+rm -rf ${RUNPATH}usr/share/locale/*
+cp -rf /usr/share/locale/en ${RUNPATH}usr/share/locale/
+
+cd ${RUNPATH}usr/share/
+rm -rf doc info man
+
+cd ${BASEDIR}
+
+
+mkdir ${BASEDIR}dist
+cp -rf ${BASEDIR}nsis-installer.nsi ${RUNPATH}../nsis-installer.nsi
+cd ${BASEDIR}dist
+
+PRGM_SUFFIX=""
+if [ "$ARCH" == "x86" ]; then
+	PRGM_SUFFIX=" (x86)"
+fi
+
+"${MAKENSIS}" /DARCH=$ARCH /DPRGM_SUFFIX="${PRGM_SUFFIX}" `cygpath -w ${RUNPATH}../nsis-installer.nsi`
+mv ${RUNPATH}../*.exe ${BASEDIR}/dist
+
+

@@ -1,8 +1,11 @@
 ; Borg Backup Installer
 ; Billy Charlton <sfbilly@gmail.com>
+; Anton Engelhardt <anton@neednow.de>
 ; --------------------------
 
-!define VERSION "1.0.11"
+!include LogicLib.nsh
+
+!define VERSION "1.1.16"
 !define VERSION_LONG "${VERSION}.0"
 
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\BorgBackupUnofficial"
@@ -18,13 +21,14 @@
 !addplugindir "."
 
 ; The name of the installer
-Name "Borg Backup ${VERSION}"
+Name "Borg Backup ${VERSION} ${ARCH}"
 
 ; The file to write
-OutFile "Borg Backup Installer v${VERSION}.exe"
+OutFile "Borg Backup Installer v${VERSION} ${ARCH}.exe"
 
-; The default installation directory
-InstallDir "C:\Program Files\Borg"
+
+InstallDir "C:\Program Files${PRGM_SUFFIX}\Borg"
+
 
 ; Registry key to check for directory (so if you install again, it will
 ; overwrite the old one automatically)
@@ -56,13 +60,13 @@ Section "Borg Backup (required)"
   SetOutPath $INSTDIR
 
   ; Unzip everything
-  File /nonfatal /a /r "Borg-installer\"
+  File /nonfatal /a /r "${ARCH}\"
 
   ; Write the installation path into the registry
   WriteRegStr HKLM "Software\BorgBackupUnofficial" "InstallPath" "$INSTDIR"
 
   ; Write the uninstall keys
-  WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayName" "Borg Backup"
+  WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayName" "Borg Backup ${ARCH}"
   WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninstall.exe"
   WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${VERSION_LONG}"
   WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "Publisher" "BorgBackup Unofficial"

@@ -1,0 +1,77 @@
+#!/bin/bash
+PS=`cygpath -S`"/WindowsPowerShell/v1.0/powershell.exe"
+NET=`cygpath -S`"/net.exe"
+CMD=`cygpath -S`"/cmd.exe"
+
+# Setting this, so the repo does not need to be given on the commandline:
+export BORG_REPO=ssh://username@example.com:2022/~/backup/main
+
+# Setting this, so you won't be asked for your repository passphrase:
+export BORG_PASSPHRASE='XYZl0ngandsecurepa_55_phrasea&&123'
+
+#Stop / Start Services 
+function services_stop {
+	$NET stop mysql
+}
+function services_start {
+	$NET start mysql
+}
+
+function vss_create {
+	SHADOWID1=$(vss_create_shadow "C:\\")
+	vss_mount_shadow $SHADOWID1 "C:\\ShadowC"
+}
+function vss_delete {
+	vss_remove_shadow $SHADOWID1 "C:\\ShadowC"
+}
+
+function borg_backup {
+borg create                         \
+    --verbose                       \
+    --filter AME                    \
+    --list                          \
+    --stats                         \
+    --show-rc                       \
+    --compression lz4               \
+    --exclude-caches                \
+    --exclude '/home/*/.cache/*'    \
+    --exclude '/var/cache/*'        \
+    --exclude '/var/tmp/*'          \
+                                    \
+    ::'{hostname}-{now}'            \
+    /etc                            \
+    /home                           \
+    /root                           \
+    /var                            \
+	
+}
+
+function borg_prune {
+}
+
+#Helper Functions
+vss_create_shadow () {
+	PSC="\$s1 = (Get-WmiObject -List Win32_ShadowCopy).Create(\"$1\", \"ClientAccessible\"); Write-Host \$s1.ShadowID -NoNewLine"
+	$PS -Command "$PSC"
+}
+
+vss_mount_shadow () {
+	PSC="\$s2 = Get-WmiObject Win32_ShadowCopy | Where-Object { \$_.ID -eq \"$1\" }; \$d  = \$s2.DeviceObject + '\'; Write-Host \$d -NoNewLine"
+	DEVICEOBJECT=`$PS -Command "$PSC"`
+	cmd /c mklink /d $2 "$DEVICEOBJECT"
+}
+
+vss_remove_shadow () {
+	cmd /c rmdir /q $2
+	PSC="\$s2 = Get-WmiObject Win32_ShadowCopy | Where-Object { \$_.ID -eq \"$1\" }; \$s2.Delete()"
+	$PS -Command "$PSC"
+}
+
+#Execute Backup
+services_stop
+trap 'services_start'
+vss_create
+services_start
+borg_backup
+vss_delete
+borg_prune
