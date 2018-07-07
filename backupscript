@@ -26,6 +26,7 @@ function vss_delete {
 }
 
 function borg_backup {
+SHADOWC_PATH=`cygpath C:\\ShadowC`
 borg create                         \
     --verbose                       \
     --filter AME                    \
@@ -33,16 +34,9 @@ borg create                         \
     --stats                         \
     --show-rc                       \
     --compression lz4               \
-    --exclude-caches                \
-    --exclude '/home/*/.cache/*'    \
-    --exclude '/var/cache/*'        \
-    --exclude '/var/tmp/*'          \
                                     \
     ::'{hostname}-{now}'            \
-    /etc                            \
-    /home                           \
-    /root                           \
-    /var                            \
+    ${SHADOWC_PATH}/Users                            \
 	
 }
 
@@ -69,9 +63,11 @@ vss_remove_shadow () {
 
 #Execute Backup
 services_stop
-trap 'services_start'
+trap 'services_start' INT TERM EXIT
 vss_create
+trap 'services_start; vss_delete' INT TERM EXIT
 services_start
+trap 'vss_delete' INT TERM EXIT
 borg_backup
 vss_delete
 borg_prune
