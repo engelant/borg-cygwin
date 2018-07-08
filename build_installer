@@ -17,7 +17,7 @@ $CYGSETUP -a ${ARCH} -q -B -o -n -R `cygpath -w $RUNPATH` -L -D -s $CYGMIRROR -P
 cp -rf ${BASEDIR}nsswitch.conf ${RUNPATH}etc/
 cp -rf /etc/fstab ${RUNPATH}etc/
 cp -rf ${BASEDIR}backupscript ${RUNPATH}backupscript.example
-chmod +x ${RUNPATH}backupscript
+cp -rf ${BASEDIR}backupscript.bat ${RUNPATH}backupscript.bat
 
 cp -rf /bin/borg ${RUNPATH}bin/
 
@@ -43,6 +43,4 @@ if [ "$ARCH" == "x86" ]; then
 fi
 
 "${MAKENSIS}" /DARCH=$ARCH /DPRGM_SUFFIX="${PRGM_SUFFIX}" `cygpath -w ${RUNPATH}../nsis-installer.nsi`
-mv ${RUNPATH}../*.exe ${BASEDIR}/dist
-
-
+mv ${RUNPATH}../*.exe ${BASEDIR}dist/
