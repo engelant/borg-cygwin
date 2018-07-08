@@ -1,3 +1,3 @@
 @echo off
 set BASEDIR=%~dp0%
-echo %BASEDIR%
+call "%BASEDIR%bin/bash" --login /backupscript

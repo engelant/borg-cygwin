@@ -11,10 +11,12 @@ export BORG_PASSPHRASE='XYZl0ngandsecurepa_55_phrasea&&123'
 
 #Stop / Start Services 
 function services_stop {
-	$NET stop mysql
+	: #Empty functions are bad in bash, remove me, when soemthing's in here
+#	$NET stop mysql
 }
 function services_start {
-	$NET start mysql
+	: #Empty functions are bad in bash, remove me, when soemthing's in here
+#	$NET start mysql
 }
 
 function vss_create {
@@ -26,7 +28,7 @@ function vss_delete {
 }
 
 function borg_backup {
-SHADOWC_PATH=`cygpath C:\\ShadowC`
+SHADOWC_PATH=`cygpath "C:\\ShadowC"`
 borg create                         \
     --verbose                       \
     --filter AME                    \
@@ -36,11 +38,19 @@ borg create                         \
     --compression lz4               \
                                     \
     ::'{hostname}-{now}'            \
-    ${SHADOWC_PATH}/Users                            \
+    ${SHADOWC_PATH}/Users/Panik/Documents                        \
 	
 }
 
 function borg_prune {
+borg prune                          \
+    --list                          \
+    --prefix '{hostname}-'          \
+    --show-rc                       \
+    --keep-daily    7               \
+    --keep-weekly   4               \
+    --keep-monthly  6               \
+	
 }
 
 #Helper Functions

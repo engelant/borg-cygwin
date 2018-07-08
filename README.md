@@ -32,7 +32,7 @@ To get a shell as SYSTEM user utilize psexec from [PsTools](https://docs.microso
 ```CMD
 psexec64 -i -s "C:\Program Files\Borg\bin\mintty.exe" -e "C:\Program Files\Borg\bin\bash.exe" --login
 ```
-To get a nice little bash shell as SYSTEM user. Be careful, this is the point where you can do pretty much everything, including breaking your machine. This covers 
+To get a nice little bash shell as SYSTEM user. Be careful, this is the point where you can do pretty much everything, including breaking your machine.
 ``` bash
 # generate keys for borg backup (no passphrase)
 ssh-keygen -t ed25519
@@ -52,7 +52,7 @@ cp -rf /backupscript.example /backupscript
 chmod 700 /backupscript
 # /backupscript is now SYSTEM owned, to edit it with e.g. Notepad++.
 # You may have to close Notepad++, if it's already running as non SYSTEM user
-"`cygpath 'C:\Program Files\Notepad++'`/Notepad++" "`cygpath -w /backupscript`"
+"`cygpath 'C:\Program Files\Notepad++'`/Notepad++" "`cygpath -w /backupscript`" &
 ```
 You want to edit (use an editor with linux line endings support like Notepad++) the backupscript to stop your services (if any) and add your directories you want to backup. This script contains code to create and mount (or link in the windows world) a shadow copy to a given directory, perform the backup and destroy the shadow. I reccomend using ``SHADOWC_PATH=`cygpath "C:\\ShadowC"` `` and then e.g. `${SHADOWC_PATH/Users}` as a backup path in _borg create_ command.
 
@@ -71,10 +71,12 @@ export BORG_PASSPHRASE='XYZl0ngandsecurepa_55_phrasea&&123'
 
 #Stop / Start Services 
 function services_stop {
-	$NET stop mysql
+	: #Empty functions are bad in bash, remove me, when soemthing's in here
+#	$NET stop mysql
 }
 function services_start {
-	$NET start mysql
+	: #Empty functions are bad in bash, remove me, when soemthing's in here
+#	$NET start mysql
 }
 
 function vss_create {
@@ -86,7 +88,7 @@ function vss_delete {
 }
 
 function borg_backup {
-SHADOWC_PATH=`cygpath C:\\ShadowC`
+SHADOWC_PATH=`cygpath "C:\\ShadowC"`
 borg create                         \
     --verbose                       \
     --filter AME                    \
@@ -96,11 +98,19 @@ borg create                         \
     --compression lz4               \
                                     \
     ::'{hostname}-{now}'            \
-    ${SHADOWC_PATH}/Users                            \
+    ${SHADOWC_PATH}/Users           \
 	
 }
 
 function borg_prune {
+borg prune                          \
+    --list                          \
+    --prefix '{hostname}-'          \
+    --show-rc                       \
+    --keep-daily    7               \
+    --keep-weekly   4               \
+    --keep-monthly  6               \
+	
 }
 
 #Helper Functions
@@ -132,6 +142,7 @@ borg_backup
 vss_delete
 trap - INT TERM
 borg_prune
+
 ```
 
 Try the initial backup by executing `/backupscript`, and if it works out you may create a windows planned task executing the `backupscript.bat` as SYSTEM user. This will call `/backupscript` in the user environement.
