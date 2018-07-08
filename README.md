@@ -1,6 +1,7 @@
 # borg-cygwin
 Borg: v1.1.6
 Cygwin: latest online
+
 Based on the work of Billy Charlton and digidream, scripting mostly done in bash, for obvious reasons.
 
 This creates a standard Windows installer for Borg Backup on 64bit (and untested 32bit) Windows 7 and above.
@@ -9,7 +10,8 @@ This creates a standard Windows installer for Borg Backup on 64bit (and untested
 * Tested on Windows 8.1 64-bit
 
 
-## WARNING - This is a WIP, which technically works, but not fully documented.
+## WARNING - This is a WIP, which technically works, but needs testing and, you know, shit can still hit the fan.
+Don't hold me responsible for that.
 As said, working on it.
 
 ## Bugs
@@ -19,6 +21,8 @@ As said, working on it.
 
 ---
 ## Running Borg
+You can find a premade installer, for both x86 and x86_64 [here](https://github.com/engelant/borg-cygwin/releases). Or just build it yourself, have a look at the [Build Borg Installer](#build-borg-installer) section. 
+
 I can't state how **important** it is to install and run the proper bitness for your system. While **64bit** on 32bit systems won't run I presume, **32bit** on 64bit will just run fine until you want to utilize something like vssadmin or shadowcopies, as in a 32bit bash environment the required libraries/services are unavailible!
 
 After Installation of the release pachage you should find a cygwin small environment in the Borg installation folder. There is also a backupscript.example file, you can use as a start point.
