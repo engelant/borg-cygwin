@@ -1,6 +1,6 @@
 # borg-cygwin
-Borg: v1.1.6
-Cygwin: latest online
+* Borg: v1.1.6
+* Cygwin: latest online
 
 Based on the work of Billy Charlton and digidream, scripting mostly done in bash, for obvious reasons.
 
@@ -140,6 +140,7 @@ Try the initial backup by executing `/backupscript`, and if it works out you may
 ## Build Borg Installer
 * The only prerequisite is NSIS installed, available at http://nsis.sourceforge.net/Download
 * About 3 GB free disk space required to build installer
+
 Create the build environment by using bootstrap.bat
 You then may proceed to run build_installer_64.bat and/or build_installer_32.bat, to create the run environment and the corresponding installer.
 
