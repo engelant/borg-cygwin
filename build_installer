@@ -37,10 +37,12 @@ mkdir ${BASEDIR}dist
 cp -rf ${BASEDIR}nsis-installer.nsi ${RUNPATH}../nsis-installer.nsi
 cd ${BASEDIR}dist
 
+VERSION=`borg -V | awk '{split($0,a," "); print a[2]}'`
+
 PRGM_SUFFIX=""
 if [ "$ARCH" == "x86" ]; then
 	PRGM_SUFFIX=" (x86)"
 fi
 
-"${MAKENSIS}" /DARCH=$ARCH /DPRGM_SUFFIX="${PRGM_SUFFIX}" `cygpath -w ${RUNPATH}../nsis-installer.nsi`
+"${MAKENSIS}" /DARCH=$ARCH /DPRGM_SUFFIX="${PRGM_SUFFIX}" /DVERSION=$VERSION `cygpath -w ${RUNPATH}../nsis-installer.nsi`
 mv ${RUNPATH}../*.exe ${BASEDIR}dist/
