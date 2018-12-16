@@ -1,5 +1,5 @@
 # borg-cygwin
-* Borg: v1.1.7
+* Borg: v1.1.8
 * Cygwin: latest online
 
 Based on the work of Billy Charlton and digidream, scripting mostly done in bash, for obvious reasons.
@@ -157,4 +157,4 @@ You then may proceed to run build_installer_64.bat and/or build_installer_32.bat
 
 The install script first builds borg inside temporary build/ARCH subfolder, then installs a much smaller release version into the run/ARCH subfolder. Built packages are copied over, unnecessary files removed (still room for improvement), and then NSIS is run and put into dist folder.
 
-Tested with CygWin 2.10.0, borgbackup 1.1.7 on Windows 8.1 64-bit.
+Tested with CygWin 2.10.0, borgbackup 1.1.8 on Windows 8.1 64-bit.
